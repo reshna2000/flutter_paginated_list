@@ -9,9 +9,7 @@ class PaginatedList extends StatefulWidget {
 }
 
 class _PaginatedListState extends State<PaginatedList> {
-  ///Api service to fetch data
   final ApiService apiService = ApiService(baseUrl: 'https://dummyjson.com/users');
-  ///list to store data fetched
   List<dynamic> _data = [];
   bool _isLoading = false;
   int _currentPage = 1;
@@ -24,7 +22,6 @@ class _PaginatedListState extends State<PaginatedList> {
     super.initState();
     _fetchData();
   }
-  /// Fetch data from API based on current page and limit
 
   Future<void> _fetchData() async {
     setState(() {
@@ -47,7 +44,6 @@ class _PaginatedListState extends State<PaginatedList> {
       });
     }
   }
-/// Go to a specific page and refresh the data
 
   void _goToPage(int page) {
     setState(() {
@@ -56,39 +52,44 @@ class _PaginatedListState extends State<PaginatedList> {
     });
     _fetchData();
   }
-/// Build pagination buttons for navigation
-  List<Widget> _buildPageButtons() {
+
+  List<Widget> _buildPageButtons(double width) {
     List<Widget> buttons = [];
     int pagesToShow = _showAllPages ? _totalPages : 5;
+    double buttonWidth = width * 0.10;
 
     for (int i = 1; i <= pagesToShow; i++) {
       buttons.add(
-        ElevatedButton(
-          onPressed: _currentPage == i ? null : () => _goToPage(i),
-          child: Text('$i'),
-          style: ElevatedButton.styleFrom(
-            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-            textStyle: TextStyle(fontSize: 12),
-            minimumSize: Size(30, 30),
+        SizedBox(
+          width: buttonWidth,
+          child: ElevatedButton(
+            onPressed: _currentPage == i ? null : () => _goToPage(i),
+            child: Text('$i'),
+            style: ElevatedButton.styleFrom(
+              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              textStyle: TextStyle(fontSize: 12),
+              minimumSize: Size(buttonWidth, buttonWidth),
+            ),
           ),
         ),
       );
     }
 
-/// Show "Show More" button if there are more pages to display
-
     if (!_showAllPages && _totalPages > 5) {
       buttons.add(
-        ElevatedButton(
-          onPressed: () {
-            setState(() {
-              _showAllPages = true;
-            });
-          },
-          child: Icon(Icons.arrow_forward),
-          style: ElevatedButton.styleFrom(
-            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-            minimumSize: Size(30, 30),
+        SizedBox(
+          width: buttonWidth,
+          child: ElevatedButton(
+            onPressed: () {
+              setState(() {
+                _showAllPages = true;
+              });
+            },
+            child: Icon(Icons.arrow_forward),
+            style: ElevatedButton.styleFrom(
+              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              minimumSize: Size(buttonWidth, buttonWidth),
+            ),
           ),
         ),
       );
@@ -99,6 +100,9 @@ class _PaginatedListState extends State<PaginatedList> {
 
   @override
   Widget build(BuildContext context) {
+    double width = MediaQuery.of(context).size.width;
+    double height = MediaQuery.of(context).size.height;
+
     return Scaffold(
       backgroundColor: Color(0xFF7fcfbc),
       appBar: AppBar(
@@ -108,7 +112,7 @@ class _PaginatedListState extends State<PaginatedList> {
             'Users List',
             style: TextStyle(
               color: Colors.white,
-              fontSize: 30,
+              fontSize: width * 0.08,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -130,6 +134,7 @@ class _PaginatedListState extends State<PaginatedList> {
             textTheme: Theme.of(context).textTheme.apply(bodyColor: Colors.white),
           ),
           child: ListView(
+            padding: EdgeInsets.zero,
             children: [
               DrawerHeader(
                 child: Column(
@@ -137,10 +142,10 @@ class _PaginatedListState extends State<PaginatedList> {
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: CircleAvatar(
-                        radius: 30,
+                        radius: width * 0.1,
                         child: Icon(
                           Icons.account_circle,
-                          size: 50,
+                          size: width * 0.1,
                           color: Colors.white,
                         ),
                       ),
@@ -149,7 +154,7 @@ class _PaginatedListState extends State<PaginatedList> {
                       "ADMIN",
                       style: TextStyle(
                         color: Colors.black,
-                        fontSize: 20,
+                        fontSize: width * 0.05,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -161,7 +166,7 @@ class _PaginatedListState extends State<PaginatedList> {
                 title: Text(
                   "Home",
                   style: TextStyle(
-                    fontSize: 15,
+                    fontSize: width * 0.04,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -171,7 +176,7 @@ class _PaginatedListState extends State<PaginatedList> {
                 title: Text(
                   "Profile",
                   style: TextStyle(
-                    fontSize: 15,
+                    fontSize: width * 0.04,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -181,7 +186,7 @@ class _PaginatedListState extends State<PaginatedList> {
                 title: Text(
                   "Logout",
                   style: TextStyle(
-                    fontSize: 15,
+                    fontSize: width * 0.04,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -203,12 +208,12 @@ class _PaginatedListState extends State<PaginatedList> {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: EdgeInsets.all(width * 0.02),
             child: SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
-                children: _buildPageButtons(),
+                children: _buildPageButtons(width),
               ),
             ),
           ),
@@ -216,9 +221,9 @@ class _PaginatedListState extends State<PaginatedList> {
       ),
     );
   }
+
   @override
   void dispose() {
     super.dispose();
   }
 }
-
