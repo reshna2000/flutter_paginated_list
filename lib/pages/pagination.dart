@@ -9,7 +9,9 @@ class PaginatedList extends StatefulWidget {
 }
 
 class _PaginatedListState extends State<PaginatedList> {
+    ///Api service to fetch data
   final ApiService apiService = ApiService(baseUrl: 'https://dummyjson.com/users');
+    ///list to store data fetched
   List<dynamic> _data = [];
   bool _isLoading = false;
   int _currentPage = 1;
@@ -22,7 +24,7 @@ class _PaginatedListState extends State<PaginatedList> {
     super.initState();
     _fetchData();
   }
-
+  /// Fetch data from API based on current page and limit
   Future<void> _fetchData() async {
     setState(() {
       _isLoading = true;
@@ -44,6 +46,7 @@ class _PaginatedListState extends State<PaginatedList> {
       });
     }
   }
+/// Go to a page and refresh the data
 
   void _goToPage(int page) {
     setState(() {
@@ -52,7 +55,7 @@ class _PaginatedListState extends State<PaginatedList> {
     });
     _fetchData();
   }
-
+/// Build pagination buttons for navigation
   List<Widget> _buildPageButtons(double width) {
     List<Widget> buttons = [];
     int pagesToShow = _showAllPages ? _totalPages : 5;
@@ -74,6 +77,7 @@ class _PaginatedListState extends State<PaginatedList> {
         ),
       );
     }
+/// Show "Show More" button if there are more pages to display
 
     if (!_showAllPages && _totalPages > 5) {
       buttons.add(
